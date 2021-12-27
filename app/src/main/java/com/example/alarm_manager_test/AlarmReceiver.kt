@@ -13,9 +13,12 @@ import java.text.SimpleDateFormat
 class AlarmReceiver: BroadcastReceiver() {
 
     companion object {
-        val TAG: String = "AlarmReceiber"
-        private val CHANNEL_ID: String = "Channel1"
-        private val CHANNEL_NAME: String = "Channel1"
+        val TAG: String = "AlarmReceiver"
+
+        private val B_CHANNEL_ID: String = "Before Expiration Date Notification Channel"
+        private val B_CHANNEL_NAME: String = "Before Expiration Date Notification Channel"
+        private val D_CHANNEL_ID: String = "Expiration Date Notification Channel"
+        private val D_CHANNEL_NAME: String = "Expiration Date Notification Channel"
     }
 
     lateinit var manager: NotificationManager
@@ -36,26 +39,31 @@ class AlarmReceiver: BroadcastReceiver() {
         }
         manager.createNotificationChannel(
             NotificationChannel(
-                CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT
+                D_CHANNEL_ID, D_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
             )
         )
-        builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        builder = NotificationCompat.Builder(context, D_CHANNEL_ID)
 
         // 알림창 클릭시 activity call
-        val intent2: Intent = Intent(context, MainActivity::class.java)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(
-            context, 101, intent2, PendingIntent.FLAG_MUTABLE
-        )
+//        val intent2: Intent = Intent(context, MainActivity::class.java)
+//        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+//            context, 101, intent2, PendingIntent.FLAG_MUTABLE
+//        )
 
-        // 노티 제목
-        builder.setContentTitle("알람")
-        builder.setSmallIcon(R.drawable.ic_launcher_background)
-        // 노티 터치시 자동 삭제
-        builder.setAutoCancel(true)
-        builder.setContentIntent(pendingIntent)
+        builder.apply {
+            // 노티 제목
+            setContentTitle("알람")
+            setContentText("렌즈 사용기한이 임박했습니다.")
+//            setContentIntent(pendingIntent)
+            setSmallIcon(R.drawable.ic_launcher_background)
+            setPriority(NotificationCompat.PRIORITY_HIGH)
+//            setFullScreenIntent(pendingIntent, true)
+            setDefaults(NotificationCompat.DEFAULT_SOUND or NotificationCompat.DEFAULT_VIBRATE)
+            // 노티 터치시 자동 삭제
+            setAutoCancel(true)
+        }
 
         val notification: Notification = builder.build()
         manager.notify(1, notification)
-
     }
 }
