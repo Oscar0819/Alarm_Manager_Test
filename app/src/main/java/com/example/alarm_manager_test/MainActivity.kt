@@ -108,6 +108,39 @@ class MainActivity : AppCompatActivity() {
             }, year0, month0, date0)
             dlg.show()
         }
+
+        binding.cancelbtn.setOnClickListener {
+            Log.d(TAG, "amCancel called")
+            val am: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val intent: Intent = Intent(this, AlarmReceiver::class.java)
+            val sender: PendingIntent = PendingIntent.getBroadcast(this,
+                2,
+                intent,
+                PendingIntent.FLAG_MUTABLE)
+            if (sender != null) {
+                am.cancel(sender)
+                sender.cancel()
+            }
+        }
+
+        binding.checkbtn.setOnClickListener {
+            Log.d(TAG, "checkbtn called")
+
+            val intent: Intent = Intent(this, AlarmReceiver::class.java)
+            val sender: PendingIntent = PendingIntent.getBroadcast(this,
+                2,
+                intent,
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_NO_CREATE)
+
+            if (sender == null) {
+                // 알람이 없는 경우
+                Log.d(TAG, "예약된 알람이 없습니다")
+            } else {
+                // 알람이 있는 경우
+                Log.d(TAG, "예약된 알람이 있습니다!")
+            }
+        }
     }
 
     private fun setAlarm(datetime: Long, requestCode: Int) {        // ms 여서 1000을 곱해줘야 초단위로 변환이 됨
